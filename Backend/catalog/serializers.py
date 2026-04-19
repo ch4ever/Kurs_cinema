@@ -1,11 +1,14 @@
 from rest_framework import serializers
 from .models import Franchise, Movie, Review, Genre, Actor
-from .services import create_movie
+from .services import *
 
 class ActorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actor
         fields = ['id', 'name', 'surname']
+    
+    def create(self, validated_data):
+        return create_actor(**validated_data)
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,6 +19,9 @@ class FranchiseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Franchise
         fields = ['id', 'name']
+
+    def create(self, validated_data):
+        return create_franchise(**validated_data)
 
 class MovieSerializer(serializers.ModelSerializer):
     actors = ActorSerializer(many=True)

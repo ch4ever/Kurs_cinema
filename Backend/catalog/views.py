@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import MovieCreateSerializer, MovieSerializer
+from .serializers import ActorSerializer, GenreSerializer, MovieCreateSerializer, MovieSerializer, FranchiseSerializer
 from .models import Movie
 from siteuser.permissions import IsAdminUser
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 # Create your views here.
 class MovieViewSet(viewsets.ModelViewSet):
@@ -31,3 +34,32 @@ class MovieViewSet(viewsets.ModelViewSet):
         elif self.action == 'list' or self.action == 'retrieve':
             return [AllowAny()]
         return super().get_permissions()
+
+class CreateFranchiseView(APIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated(), IsAdminUser()]
+    serializer_class = FranchiseSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class CreateActorView(APIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated(), IsAdminUser()]
+    serializer_class = ActorSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class CreateGenreView(APIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated(), IsAdminUser()]
+    serializer_class = GenreSerializer
