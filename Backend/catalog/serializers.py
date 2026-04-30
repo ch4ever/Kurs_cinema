@@ -7,21 +7,18 @@ class ActorSerializer(serializers.ModelSerializer):
         model = Actor
         fields = ['id', 'name', 'surname']
     
-    def create(self, validated_data):
-        return create_actor(**validated_data)
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = '__all__'
 
+
 class FranchiseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Franchise
         fields = ['id', 'name']
 
-    def create(self, validated_data):
-        return create_franchise(**validated_data)
 
 class MovieSerializer(serializers.ModelSerializer):
     actors = ActorSerializer(many=True)

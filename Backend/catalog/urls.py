@@ -5,11 +5,11 @@ from django.urls import include
 
 router = DefaultRouter()
 router.register('movies', MovieViewSet, basename='movies')
-router.register('franchise', CreateFranchiseView.as_view(),basename='franchise')
-router.register('actor', CreateActorView.as_view(),basename='actor')
-router.register('genre', CreateGenreView.as_view(),basename='genre')
 
 
 urlpatterns =[
     path('api/', include(router.urls)),
+    path('franchise/', CreateFranchiseView.as_view(), name='create-franchise'),
+    path('actors/', CreateActorView.as_view(), name='create-actor'),
+    path('genres/', CreateGenreView.as_view(), name='create-genre'),
 ]

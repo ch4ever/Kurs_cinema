@@ -20,8 +20,8 @@ def create_actor(name: str, surname: str) -> Actor:
 
 def create_genre(name: str):
     with transaction.atomic():
-        if not Actor.objects.filter(name=name).exists():
-            actor = Actor.objects.create(name=name)
+        if not Genre.objects.filter(name=name).exists():
+            actor = Genre.objects.create(name=name)
             return actor
         else:
             raise ValueError("Genre already exists")

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from .services import create_genre, create_actor, create_franchise
 from .serializers import ActorSerializer, GenreSerializer, MovieCreateSerializer, MovieSerializer, FranchiseSerializer
 from .models import Movie
 from siteuser.permissions import IsAdminUser
@@ -37,29 +38,47 @@ class MovieViewSet(viewsets.ModelViewSet):
 
 class CreateFranchiseView(APIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated(), IsAdminUser()]
+    permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = FranchiseSerializer
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        if serializer.is_valid(raise_exception=True):
+            try:
+                franchise = create_franchise(**serializer.validated_data)
+                response_data = self.serializer_class(franchise).data
+                return Response(response_data, status=status.HTTP_201_CREATED)
+            except ValueError as e:
+                return Response({"error": str(e)},status = status.HTTP_400_BAD_REQUEST)
 
 class CreateActorView(APIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated(), IsAdminUser()]
+    permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = ActorSerializer
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        if serializer.is_valid(raise_exception=True):
+            try:
+                franchise = create_actor(**serializer.validated_data)
+                response_data = self.serializer_class(franchise).data
+                return Response(response_data, status=status.HTTP_201_CREATED)
+            except ValueError as e:
+                return Response({"error": str(e)},status = status.HTTP_400_BAD_REQUEST)
 
 class CreateGenreView(APIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated(), IsAdminUser()]
+    permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = GenreSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            try:
+                franchise = create_genre(**serializer.validated_data)
+                response_data = self.serializer_class(franchise).data
+                return Response(response_data, status=status.HTTP_201_CREATED)
+            except ValueError as e:
+                return Response({"error": str(e)},status = status.HTTP_400_BAD_REQUEST)
+
+
