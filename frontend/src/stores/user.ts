@@ -4,6 +4,7 @@ import api from '../api/api'
 export type AuthUser = {
   id: number
   username: string
+  role?: string
 }
 
 function readUserFromStorage(): AuthUser | null {
@@ -52,6 +53,7 @@ export const userStore = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => Boolean(state.token),
     username: (state) => state.user?.username ?? '',
+    isAdmin: (state) => state.user?.role === 'Admins',
   },
 
   actions: {

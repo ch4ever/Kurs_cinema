@@ -25,7 +25,7 @@ function logout() {
           K
         </span>
         <span class="hidden text-lg font-bold tracking-tight text-slate-800 sm:inline dark:text-white">
-          Kinoteatr
+          K-cinema
         </span>
       </RouterLink>
 
@@ -35,41 +35,48 @@ function logout() {
           class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200/90 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
           active-class="!bg-white !text-violet-800 shadow-sm ring-1 ring-slate-300/80 dark:!bg-violet-950/50 dark:!text-violet-200 dark:ring-slate-700"
         >
-          Главная
+          Main
         </RouterLink>
-        <RouterLink
+        
+        <RouterLink v-if="auth.isAdmin"
           to="/create"
           class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200/90 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
           active-class="!bg-white !text-violet-800 shadow-sm ring-1 ring-slate-300/80 dark:!bg-violet-950/50 dark:!text-violet-200 dark:ring-slate-700"
         >
-          Новый фильм
+          Add film
         </RouterLink>
 
         <template v-if="auth.isAuthenticated">
-          <span
-            class="hidden max-w-40 truncate rounded-lg bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 ring-1 ring-slate-300/80 sm:inline dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-600"
-            :title="auth.username"
-          >
+        <router-link
+          to="/profile/tickets"
+          class="group flex items-center gap-2 rounded-xl bg-white px-3 py-1.5 text-xs font-bold text-slate-700 ring-1 ring-slate-300/80 transition-all hover:bg-slate-50 hover:ring-violet-500/50 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700 dark:hover:bg-slate-700/50"
+          :title="'My Tickets: ' + auth.username"
+        >
+          <span class="text-base transition-transform group-hover:rotate-12">🎫</span>
+          
+          <span class="hidden max-w-32 truncate sm:inline">
             {{ auth.username }}
           </span>
-          <button
-            type="button"
-            class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200/90 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
-            @click="logout"
-          >
-            Выйти
-          </button>
-        </template>
-        <template v-else>
-          <button
-            type="button"
-            class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200/90 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
-            @click="auth.openAuthModal('login')"
-          >
-            Auth
-          </button>
-          
-        </template>
+        </router-link>
+
+        <button
+          type="button"
+          class="rounded-xl px-3 py-2 text-sm font-semibold text-slate-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-400 dark:hover:bg-red-950/30 dark:hover:text-red-400"
+          @click="logout"
+        >
+          logout
+        </button>
+      </template>
+
+      <template v-else>
+        <button
+          type="button"
+          class="rounded-xl bg-violet-600 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-violet-500/20 transition-all hover:bg-violet-500 hover:shadow-violet-500/40"
+          @click="auth.openAuthModal('login')"
+        >
+          Sign In
+        </button>
+      </template>
 
         <ThemeToggle />
       </nav>

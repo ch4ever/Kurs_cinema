@@ -109,7 +109,7 @@ function onBackdropClick(e: MouseEvent) {
               "
               @click="auth.authModalTab = 'login'"
             >
-              Вход
+              Login
             </button>
             <button
               type="button"
@@ -121,19 +121,19 @@ function onBackdropClick(e: MouseEvent) {
               "
               @click="auth.authModalTab = 'register'"
             >
-              Регистрация
+              Register
             </button>
           </div>
 
           <div class="p-6 sm:p-8">
             <div class="flex items-start justify-between gap-4">
               <h2 id="auth-modal-title" class="text-lg font-bold text-slate-900 dark:text-white">
-                {{ auth.authModalTab === 'login' ? 'Войти в аккаунт' : 'Создать аккаунт' }}
+                {{ auth.authModalTab === 'login' ? 'Login' : 'Account creation' }}
               </h2>
               <button
                 type="button"
                 class="rounded-lg p-1 text-slate-400 transition hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200"
-                aria-label="Закрыть"
+                aria-label="Close"
                 @click="auth.closeAuthModal()"
               >
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -151,7 +151,7 @@ function onBackdropClick(e: MouseEvent) {
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Логин</label>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Login</label>
                 <input
                   v-model="username"
                   type="text"
@@ -162,7 +162,7 @@ function onBackdropClick(e: MouseEvent) {
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Пароль</label>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
                 <input
                   v-model="password"
                   type="password"
@@ -173,7 +173,7 @@ function onBackdropClick(e: MouseEvent) {
                 />
               </div>
               <div v-if="auth.authModalTab === 'register'">
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Повтор пароля</label>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Repeat password</label>
                 <input
                   v-model="password2"
                   type="password"
@@ -182,7 +182,7 @@ function onBackdropClick(e: MouseEvent) {
                   class="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-900 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                 />
                 <p v-if="passwordsMismatch()" class="mt-1 text-xs text-amber-700 dark:text-amber-400">
-                  Пароли должны совпадать
+                  Passwords needs to match
                 </p>
               </div>
 
@@ -191,7 +191,7 @@ function onBackdropClick(e: MouseEvent) {
                 :disabled="loading || passwordsMismatch()"
                 class="w-full rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 py-3 text-sm font-semibold text-white shadow-md shadow-violet-500/20 transition hover:shadow-lg disabled:opacity-50"
               >
-                {{ loading ? 'Подождите…' : auth.authModalTab === 'login' ? 'Войти' : 'Зарегистрироваться' }}
+                {{ loading ? 'wait…' : auth.authModalTab === 'login' ? 'Login' : 'Register' }}
               </button>
             </form>
           </div>

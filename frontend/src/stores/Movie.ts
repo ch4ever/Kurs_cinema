@@ -33,6 +33,7 @@ type Movie = {
     director: string
     actors: Actor[]
     reviews: Review[]
+    poster: string | null
 }
 
 export const useMovieStore = defineStore('movie', {
