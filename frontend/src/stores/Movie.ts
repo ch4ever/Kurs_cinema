@@ -27,7 +27,7 @@ type Movie = {
     title: string
     description: string
     release_date: string
-    franchise: Franchise
+    franchise: Franchise | null
     rating: number
     genre: Genre[]
     director: string

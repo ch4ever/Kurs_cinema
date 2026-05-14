@@ -26,14 +26,22 @@ def create_genre(name: str):
         else:
             raise ValueError("Genre already exists")
 
-def create_movie(title: str, description:str, release_date: datetime, franchise: int=None, 
-    actor_ids: list[int] = None, genre_ids: list[int] = None,) -> Movie:
+def create_movie(
+    title: str,
+    description: str,
+    release_date: datetime,
+    franchise: int | None = None,
+    actor_ids: list[int] | None = None,
+    genre_ids: list[int] | None = None,
+    poster=None,
+) -> Movie:
     with transaction.atomic():
         movie = Movie.objects.create(
             title=title,
             description=description,
             release_date=release_date,
-            franchise=franchise
+            franchise_id=franchise,
+            poster=poster,
         )
         movie.actors.set(actor_ids or [])
         movie.genres.set(genre_ids or [])

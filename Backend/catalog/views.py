@@ -1,9 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .services import create_genre, create_actor, create_franchise
 from .serializers import ActorSerializer, GenreSerializer, MovieCreateSerializer, MovieSerializer, FranchiseSerializer
-from .models import Movie
+from .models import Movie, MovieBooking
 from siteuser.permissions import IsAdminUser
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -81,4 +81,33 @@ class CreateGenreView(APIView):
             except ValueError as e:
                 return Response({"error": str(e)},status = status.HTTP_400_BAD_REQUEST)
 
+class BookMovieView(APIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request, movie_id):
+        movie = get_object_or_404(Movie, id=movie_id)
+        seats = request.data.get('seats', []) 
+        
+        
+        MovieBooking.objects.create(
+            user=request.user, 
+            movie=movie, 
+            seats=seats
+        )
+        return Response({"message": "Билеты куплены!"}, status=201)
+
+
+class MovieBookedSeatsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, movie_id):
+        get_object_or_404(Movie, id=movie_id)
+        booked: list[str] = []
+        for booking in MovieBooking.objects.filter(movie_id=movie_id).only('seats'):
+            raw = booking.seats or []
+            if isinstance(raw, list):
+                for seat in raw:
+                    if isinstance(seat, str) and seat not in booked:
+                        booked.append(seat)
+        return Response({"booked_seats": booked},status=201)

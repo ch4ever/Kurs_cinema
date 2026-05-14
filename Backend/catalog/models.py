@@ -24,6 +24,7 @@ class Movie(models.Model):
     title = models.CharField(max_length = 150,)
     description = models.TextField()
     release_date = models.DateField()
+    poster = models.ImageField(upload_to='posters/', null=True, blank=True, verbose_name="Poster")
 
     franchise = models.ForeignKey(Franchise, 
                             blank = True, null = True, 
@@ -47,3 +48,9 @@ class Review(models.Model):
     rating = models.CharField(choices=RATING_CHOICES)
     text = models.TextField(blank=True,null=True)
     created_at = models.DateField(auto_now_add=True)
+
+class MovieBooking(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
+    seats = models.JSONField(default=list) 
+    created_at = models.DateTimeField(auto_now_add=True)
