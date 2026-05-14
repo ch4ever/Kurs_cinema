@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .services import create_genre, create_actor, create_franchise
-from .serializers import ActorSerializer, GenreSerializer, MovieCreateSerializer, MovieSerializer, FranchiseSerializer
+from .serializers import ActorSerializer, GenreSerializer, MovieCreateSerializer, MovieSerializer, FranchiseSerializer,MovieBookingSerializer
 from .models import Movie, MovieBooking
 from siteuser.permissions import IsAdminUser
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
@@ -111,3 +111,18 @@ class MovieBookedSeatsView(APIView):
                     if isinstance(seat, str) and seat not in booked:
                         booked.append(seat)
         return Response({"booked_seats": booked},status=201)
+
+
+# views.py
+
+class MyTicketsView(APIView):
+    def get(self, request):
+        bookings = MovieBooking.objects.filter(user=request.user).select_related('movie')
+        
+        serializer = MovieBookingSerializer(
+            bookings, 
+            many=True, 
+            context={'request': request} 
+        )
+        
+        return Response(serializer.data)

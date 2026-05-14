@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Franchise, Movie, Review, Genre, Actor
+from .models import Franchise, Movie, Review, Genre, Actor,MovieBooking
 from .services import *
 
 class ActorSerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class MovieSerializer(serializers.ModelSerializer):
     franchise = FranchiseSerializer(allow_null=True)
     class Meta:
         model = Movie
-        fields = ['id', 'title', 'description', 'release_date','franchise', 'actors', 'genres']
+        fields = ['id', 'title', 'description', 'release_date','franchise', 'actors', 'genres','poster']
 
 class MovieCreateSerializer(serializers.ModelSerializer):
     actor_ids = serializers.ListField(child=serializers.IntegerField(), required=False,write_only=True)
@@ -46,3 +46,11 @@ class MovieCreateSerializer(serializers.ModelSerializer):
             franchise=franchise_id,
             **validated_data,
         )
+
+class MovieBookingSerializer(serializers.ModelSerializer):
+    movie = MovieSerializer(read_only=True) 
+    
+    class Meta:
+        model = MovieBooking
+        fields = ['id', 'movie', 'seats', 'created_at'] 
+        read_only_fields = ['id', 'created_at']

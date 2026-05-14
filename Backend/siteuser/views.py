@@ -46,6 +46,7 @@ class user_register(APIView):
             output_data = {
                 "user_id": user.id,
                 "username": user.username,
+                "role": user.role,
                 "access": str(token.access_token),
                 "refresh": str(token),
 
@@ -63,4 +64,5 @@ class CurrentUserView(APIView):
         return Response({
             "id": user.id,
             "username": user.username,
+            "role": user.role
         })
