@@ -21,7 +21,7 @@ class UsersManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         
         
-        return self.create_user(username,password,**extra_fields)
+        return self.create_user(username, password, role=role, **extra_fields)
 
 class defaultUser(AbstractBaseUser):
     username=models.CharField('username', max_length=20, unique=True)

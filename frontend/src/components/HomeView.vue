@@ -87,7 +87,7 @@ onMounted(() => {
           <div
             v-for="n in 8"
             :key="n"
-            class="aspect-[2/3] w-full animate-pulse rounded-2xl bg-slate-200 dark:bg-slate-800/80"
+            class="aspect-2/3 w-full animate-pulse rounded-2xl bg-slate-200 dark:bg-slate-800/80"
           ></div>
         </div>
 
@@ -99,7 +99,7 @@ onMounted(() => {
             <div class="flex h-20 w-20 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900/30">
               <span class="text-4xl drop-shadow-md">🎬</span>
             </div>
-            <h3 class="mt-6 text-xl font-semibold text-slate-900 dark:text-white">Афиша пока пустая</h3>
+            <h3 class="mt-6 text-xl font-semibold text-slate-900 dark:text-white">Empty...</h3>
             <p class="mt-2 text-slate-500 dark:text-slate-400 max-w-sm">
               No films here yet...
             </p>

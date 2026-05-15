@@ -18,8 +18,8 @@ import os.path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-dotenv_path = BASE_DIR /(".env.docker" if os.getenv("USE_DOCKER") == "1" else ".env.local")
-load_dotenv(dotenv_path)
+# dotenv_path = BASE_DIR /(".env" if os.getenv("USE_DOCKER") == "1" else ".env.local")
+# load_dotenv(dotenv_path)
 
 
 # Quick-start development settings - unsuitable for production
@@ -29,7 +29,7 @@ load_dotenv(dotenv_path)
 SECRET_KEY = 'django-insecure-$me444x)avw8$xr_ttv^&!!_iw^qai9dp&vr0b$&v*cqpvq0&2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+DEBUG = os.environ.get("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -91,14 +91,13 @@ WSGI_APPLICATION = 'Kursach.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'USER': os.getenv("DB_USER"),
-        'NAME': 'Kinoteatr',
-        'PASSWORD': os.getenv("DB_PASSWORD"),
-        'PORT': '5432',
-        'HOST': os.getenv('DB_HOST','localhost')
+        'NAME': os.environ.get('DB_NAME', 'Kinoteatr'), 
+        'USER': os.environ.get('DB_USER', 'nik'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', '1234'),
+        'HOST': os.environ.get('DB_HOST', 'db'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -135,6 +134,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

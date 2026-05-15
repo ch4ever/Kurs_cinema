@@ -1,0 +1,56 @@
+
+services:
+  # 1. База данных PostgreSQL
+  db:
+    image: postgres:15-alpine
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+   
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  
+  # redis:
+  #   image: redis:7-alpine
+  #   restart: always
+
+  # 3. Бэкенд (Django)
+  backend:
+    build: ./Backend
+    restart: always
+    # Команда запуска: миграции -> сбор статики -> Gunicorn
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --no-input &&
+             gunicorn Kursach.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - ./Backend/media:/app/media
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      # redis:
+      #   condition: service_started
+    expose:
+      - "8000"
+
+  # 4. Фронтенд (Vue + Nginx)
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

@@ -175,7 +175,7 @@ async function loadBookedSeats() {
 
 onMounted(() => {
   void loadBookedSeats()
-  // Also load movie info if not present in store
+ 
   if (movieId) {
     void movieStore.getMovie(Number(movieId))
   }
@@ -183,7 +183,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Custom scrollbar for seats on mobile */
 ::-webkit-scrollbar {
   height: 4px;
 }
