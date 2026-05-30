@@ -8,12 +8,15 @@ const isDark = () => settingsStore.theme === 'dark'
 <template>
   <button
     type="button"
-    class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-400/80 bg-white text-amber-600 shadow-sm transition hover:border-slate-500 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-amber-300 dark:hover:border-slate-600 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-950"
+    class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-400/80 bg-white text-amber-600 shadow-sm transition 
+    hover:border-slate-500 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 
+    focus-visible:ring-violet-600 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 dark:border-slate-700 dark:bg-slate-900 
+    dark:text-amber-300 dark:hover:border-slate-600 dark:hover:bg-slate-800 dark:focus-visible:ring-offset-slate-950"
     :aria-label="isDark() ? 'Включить светлую тему' : 'Включить тёмную тему'"
     :title="isDark() ? 'Светлая тема' : 'Тёмная тема'"
     @click="settingsStore.changeTheme()"
   >
-    <!-- sun: light mode active → offer dark -->
+  
     <svg
       v-if="!isDark()"
       class="h-5 w-5"
@@ -30,7 +33,6 @@ const isDark = () => settingsStore.theme === 'dark'
         d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
       />
     </svg>
-    <!-- moon: dark mode active → offer light -->
     <svg
       v-else
       class="h-5 w-5 text-slate-200"

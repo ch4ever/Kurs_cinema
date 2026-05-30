@@ -40,7 +40,6 @@ class Review(models.Model):
         ('2', '2'), ('2.5', '2.5'), ('3', '3'), 
         ('3.5', '3.5'), ('4', '4'), ('4.5', '4.5'), ('5', '5')
     )
-
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="reviews",
                             on_delete=models.CASCADE,null=True, blank=True)
     movie = models.ForeignKey(Movie, related_name="reviews",
@@ -49,8 +48,9 @@ class Review(models.Model):
     text = models.TextField(blank=True,null=True)
     created_at = models.DateField(auto_now_add=True)
 
+
 class MovieBooking(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
-    seats = models.JSONField(default=list) 
+    seats = models.JSONField(default=list)
     created_at = models.DateTimeField(auto_now_add=True)

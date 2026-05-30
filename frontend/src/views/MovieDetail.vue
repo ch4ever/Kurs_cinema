@@ -3,7 +3,7 @@ import { onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useMovieStore } from '@/stores/Movie'
 import { userStore } from '@/stores/user'
-import AppHeader from './AppHeader.vue'
+import AppHeader from '../components/AppHeader.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -43,14 +43,14 @@ const goToEdit = () => {
           :src="movie.poster" 
           class="h-full w-full object-cover opacity-20 blur-3xl saturate-150"
         />
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-slate-50 to-slate-50 dark:via-[#0B0F19] dark:to-[#0B0F19]"></div>
+        <div class="absolute inset-0 bg-linear-to-b from-transparent via-slate-50 to-slate-50 dark:via-[#0B0F19] dark:to-[#0B0F19]"></div>
       </div>
 
       <div class="relative mx-auto max-w-6xl px-4 pt-12 pb-24 sm:px-6 lg:px-8">
         <div class="flex flex-col gap-10 lg:flex-row">
           
-          <div class="mx-auto w-full max-w-[320px] lg:mx-0 flex-shrink-0">
-            <div class="group relative aspect-[2/3] overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20">
+          <div class="mx-auto w-full max-w-[320px] lg:mx-0 shrink-0">
+            <div class="group relative aspect-2/3 overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20">
               <img 
                 v-if="movie.poster" 
                 :src="movie.poster" 
@@ -78,9 +78,7 @@ const goToEdit = () => {
               <span class="inline-flex items-center rounded-md bg-violet-500/10 px-2 py-1 text-xs font-bold uppercase tracking-wider text-violet-600 ring-1 ring-inset ring-violet-500/20 dark:text-violet-400">
                 Full HD
               </span>
-              <!-- <span class="inline-flex items-center rounded-md bg-amber-500/10 px-2 py-1 text-xs font-bold uppercase tracking-wider text-amber-600 ring-1 ring-inset ring-amber-500/20 dark:text-amber-400">
-                IMDb {{ movie.rating || 'N/A' }}
-              </span> -->
+             
             </div>
 
             <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-6xl dark:text-white">
@@ -122,16 +120,12 @@ const goToEdit = () => {
             <div class="mt-12 flex flex-wrap gap-4">
               <button
                 @click="goToBooking"
-                class="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-10 py-4 text-lg font-bold text-white shadow-xl shadow-violet-500/25 transition-all hover:-translate-y-1 hover:shadow-violet-500/40"
+                class="inline-flex items-center justify-center rounded-2xl bg-linear-to-r from-violet-600 to-fuchsia-600 px-10 py-4 text-lg font-bold text-white shadow-xl shadow-violet-500/25 transition-all hover:-translate-y-1 hover:shadow-violet-500/40"
               >
                 🎟️ Book Tickets Now
               </button>
               
-              <!-- <button
-                class="inline-flex items-center justify-center rounded-2xl bg-white px-10 py-4 text-lg font-bold text-slate-900 shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50 dark:bg-slate-800 dark:text-white dark:ring-slate-700 dark:hover:bg-slate-700"
-              >
-                📽️ Watch Trailer
-              </button> -->
+              
             </div>
           </div>
         </div>

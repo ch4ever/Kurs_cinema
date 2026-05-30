@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-# Create your views here.
+
 class MovieViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
     queryset = Movie.objects.all()
@@ -36,6 +36,7 @@ class MovieViewSet(viewsets.ModelViewSet):
             return [AllowAny()]
         return super().get_permissions()
 
+
 class CreateFranchiseView(APIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
     permission_classes = [IsAuthenticated, IsAdminUser]
@@ -50,6 +51,7 @@ class CreateFranchiseView(APIView):
                 return Response(response_data, status=status.HTTP_201_CREATED)
             except ValueError as e:
                 return Response({"error": str(e)},status = status.HTTP_400_BAD_REQUEST)
+
 
 class CreateActorView(APIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
@@ -95,7 +97,7 @@ class BookMovieView(APIView):
             movie=movie, 
             seats=seats
         )
-        return Response({"message": "Билеты куплены!"}, status=201)
+        return Response({"message": "Tickets bought successfully"}, status=status.HTTP_201_CREATED)
 
 
 class MovieBookedSeatsView(APIView):
@@ -110,19 +112,13 @@ class MovieBookedSeatsView(APIView):
                 for seat in raw:
                     if isinstance(seat, str) and seat not in booked:
                         booked.append(seat)
-        return Response({"booked_seats": booked},status=201)
+        return Response({"booked_seats": booked},status=status.HTTP_201_CREATED)
 
 
-# views.py
 
 class MyTicketsView(APIView):
     def get(self, request):
         bookings = MovieBooking.objects.filter(user=request.user).select_related('movie')
         
-        serializer = MovieBookingSerializer(
-            bookings, 
-            many=True, 
-            context={'request': request} 
-        )
-        
-        return Response(serializer.data)
+        serializer = MovieBookingSerializer(bookings, many=True,  context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)

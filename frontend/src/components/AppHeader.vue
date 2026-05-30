@@ -20,7 +20,7 @@ function logout() {
         class="group flex items-center gap-2.5 rounded-lg outline-none ring-violet-500/0 transition focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-100 dark:focus-visible:ring-offset-slate-950"
       >
         <span
-          class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 text-sm font-black text-white shadow-md shadow-violet-600/20 transition group-hover:shadow-lg dark:shadow-violet-500/25"
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-violet-600 to-fuchsia-600 text-sm font-black text-white shadow-md shadow-violet-600/20 transition group-hover:shadow-lg dark:shadow-violet-500/25"
         >
           K
         </span>

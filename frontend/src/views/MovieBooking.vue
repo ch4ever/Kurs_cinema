@@ -1,3 +1,91 @@
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import api from '../api/api'
+import AppHeader from '../components/AppHeader.vue'
+import { useMovieStore } from '@/stores/Movie'
+
+const route = useRoute()
+const router = useRouter()
+
+const movieStore = useMovieStore()
+const movieId = String(route.params.id ?? '')
+
+const ticketPrice = 100
+const isLoading = ref(false)
+
+const rows = ['A', 'B', 'C', 'D', 'E', 'F']
+const cols = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+const bookedSeats = ref<string[]>([])
+const selectedSeats = ref<string[]>([])
+
+const totalPrice = computed(() => selectedSeats.value.length * ticketPrice)
+
+const isBooked = (row: string, col: number) => bookedSeats.value.includes(`${row}${col}`)
+const isSelected = (row: string, col: number) => selectedSeats.value.includes(`${row}${col}`)
+
+const toggleSeat = (row: string, col: number) => {
+  const seatId = `${row}${col}`
+  if (isBooked(row, col)) return
+  if (isSelected(row, col)) {
+    selectedSeats.value = selectedSeats.value.filter((s) => s !== seatId)
+  } else {
+    selectedSeats.value.push(seatId)
+  }
+}
+
+const buyTickets = async () => {
+  isLoading.value = true
+  try {
+    await api.post(`movies/${movieId}/book/`, {
+      seats: selectedSeats.value,
+    })
+    alert('Tickets purchased successfully! 🎉')
+    router.push('/tickets')
+  } catch (error) {
+    alert('Error while purchasing tickets.')
+    console.error(error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+async function loadBookedSeats() {
+  if (!movieId) return
+  try {
+    const { data } = await api.get<{ booked_seats: string[] }>(`movies/${movieId}/seats/`)
+    bookedSeats.value = Array.isArray(data.booked_seats) ? data.booked_seats : []
+  } catch (e) {
+    console.error('Error loading booked seats', e)
+    bookedSeats.value = []
+  }
+}
+
+onMounted(() => {
+  void loadBookedSeats()
+ 
+  if (movieId) {
+    void movieStore.getMovie(Number(movieId))
+  }
+})
+</script>
+
+<style scoped>
+::-webkit-scrollbar {
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.2);
+  border-radius: 10px;
+}
+</style>
+
+
+
 <template>
   <div class="min-h-screen bg-slate-50 dark:bg-[#0B0F19] transition-colors duration-300">
     <AppHeader />
@@ -44,7 +132,7 @@
                   isBooked(row, col)
                     ? 'cursor-not-allowed bg-slate-200 dark:bg-slate-800'
                     : isSelected(row, col)
-                      ? 'scale-110 bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-xl shadow-violet-500/40'
+                      ? 'scale-110 bg-linear-to-br from-violet-500 to-fuchsia-500 shadow-xl shadow-violet-500/40'
                       : 'bg-white border border-slate-200 hover:border-violet-400 hover:shadow-md dark:bg-slate-800/50 dark:border-slate-700 dark:hover:border-violet-500'
                 ]"
                 @click="toggleSeat(row, col)"
@@ -71,7 +159,7 @@
             Available
           </div>
           <div class="flex items-center gap-3 text-xs font-bold text-slate-500">
-            <div class="h-4 w-4 rounded bg-gradient-to-br from-violet-500 to-fuchsia-500" />
+            <div class="h-4 w-4 rounded bg-linear-to-br from-violet-500 to-fuchsia-500" />
             Selected
           </div>
           <div class="flex items-center gap-3 text-xs font-bold text-slate-500">
@@ -98,7 +186,7 @@
             @click="buyTickets"
             class="group relative w-full sm:w-auto overflow-hidden rounded-2xl bg-slate-900 px-12 py-4 text-sm font-black text-white transition-all hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-violet-600"
           >
-            <div class="absolute inset-0 bg-gradient-to-r from-violet-400 to-fuchsia-400 opacity-0 transition-opacity group-hover:opacity-10" />
+            <div class="absolute inset-0 bg-linear-to-r from-violet-400 to-fuchsia-400 opacity-0 transition-opacity group-hover:opacity-10" />
             <span class="relative flex items-center justify-center gap-2">
               {{ isLoading ? 'Processing...' : 'Complete Booking' }}
               <span v-if="!isLoading" class="text-lg">→</span>
@@ -110,87 +198,3 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import api from '../api/api'
-import AppHeader from './AppHeader.vue'
-import { useMovieStore } from '@/stores/Movie'
-
-const route = useRoute()
-const router = useRouter()
-const movieStore = useMovieStore()
-const movieId = String(route.params.id ?? '')
-
-const ticketPrice = 100
-const isLoading = ref(false)
-
-const rows = ['A', 'B', 'C', 'D', 'E', 'F']
-const cols = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-const bookedSeats = ref<string[]>([])
-const selectedSeats = ref<string[]>([])
-
-const totalPrice = computed(() => selectedSeats.value.length * ticketPrice)
-
-const isBooked = (row: string, col: number) => bookedSeats.value.includes(`${row}${col}`)
-const isSelected = (row: string, col: number) => selectedSeats.value.includes(`${row}${col}`)
-
-const toggleSeat = (row: string, col: number) => {
-  const seatId = `${row}${col}`
-  if (isBooked(row, col)) return
-  if (isSelected(row, col)) {
-    selectedSeats.value = selectedSeats.value.filter((s) => s !== seatId)
-  } else {
-    selectedSeats.value.push(seatId)
-  }
-}
-
-const buyTickets = async () => {
-  isLoading.value = true
-  try {
-    await api.post(`movies/${movieId}/book/`, {
-      seats: selectedSeats.value,
-    })
-    alert('Tickets purchased successfully! 🎉')
-    router.push('/')
-  } catch (error) {
-    alert('Error while purchasing tickets.')
-    console.error(error)
-  } finally {
-    isLoading.value = false
-  }
-}
-
-async function loadBookedSeats() {
-  if (!movieId) return
-  try {
-    const { data } = await api.get<{ booked_seats: string[] }>(`movies/${movieId}/seats/`)
-    bookedSeats.value = Array.isArray(data.booked_seats) ? data.booked_seats : []
-  } catch (e) {
-    console.error('Error loading booked seats', e)
-    bookedSeats.value = []
-  }
-}
-
-onMounted(() => {
-  void loadBookedSeats()
- 
-  if (movieId) {
-    void movieStore.getMovie(Number(movieId))
-  }
-})
-</script>
-
-<style scoped>
-::-webkit-scrollbar {
-  height: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.2);
-  border-radius: 10px;
-}
-</style>

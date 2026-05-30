@@ -43,7 +43,7 @@ onMounted(() => {
 
           <h1 class="mx-auto max-w-4xl text-5xl font-extrabold tracking-tight text-slate-900 sm:text-7xl dark:text-white">
             Choose the films
-            <span class="relative whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-600 dark:from-violet-400 dark:to-fuchsia-400">
+            <span class="relative whitespace-nowrap text-transparent bg-clip-text bg-linear-to-r from-violet-600 to-fuchsia-600 dark:from-violet-400 dark:to-fuchsia-400">
               <svg aria-hidden="true" viewBox="0 0 418 42" class="absolute left-0 top-2/3 h-[0.58em] w-full fill-violet-300/50 dark:fill-violet-700/50" preserveAspectRatio="none"><path d="M203.371.916c-26.013-2.078-76.686 1.963-124.738 9.423-9.293 1.43-34.614 5.244-48.423 8.358-13.808 3.113-28.536 7.42-30.124 7.646-1.587.225-2.28 1.472-1.408 2.544.872 1.073 5.434 1.343 11.236.666 4.67-.543 14.864-2.583 22.651-4.542 56.402-14.167 116.516-19.658 174.551-15.918 41.59 2.682 82.547 11.455 120.301 25.801 10.975 4.167 31.968 13.064 33.25 14.184 1.282 1.121 2.378-.458 1.543-2.222-2.146-4.521-12.78-14.398-22.186-20.655C310.222 9.07 258.91 3.268 203.371.916z"></path></svg>
               <span class="relative">and the places</span>
             </span>

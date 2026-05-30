@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
@@ -11,22 +11,22 @@ const router = createRouter({
     {
       path: '/create',
       name: 'create',
-      component: () => import('@/components/MovieCreation.vue'),
+      component: () => import('@/views/MovieCreation.vue'),
     },
     {
       path: '/edit/:id',
       name: 'edit',
-      component: () => import('@/components/MovieCreation.vue') 
+      component: () => import('@/views/MovieCreation.vue') 
     },
     {
       path: '/booking/:id',
       name: 'booking',
-      component: () => import('@/components/MovieBooking.vue'),
+      component: () => import('@/views/MovieBooking.vue'),
     },
     {
       path: '/movie/:id',
       name: 'movie detail',
-      component: () =>import('@/components/MovieDetail.vue')
+      component: () =>import('@/views/MovieDetail.vue')
     },
     {
       path: '/profile/tickets',
@@ -39,4 +39,4 @@ const router = createRouter({
   ],
 })
 
-export default router
+// export default router

@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
  
 
-# Create your views here.
+
 class login(APIView):
     def post(self, request):
         username = request.data.get('username')

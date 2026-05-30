@@ -60,7 +60,7 @@ async function submitRegister() {
   try {
     await auth.register(username.value.trim(), password.value)
   } catch (e) {
-    errorMsg.value = e instanceof Error ? e.message : 'Ошибка регистрации'
+    errorMsg.value = e instanceof Error ? e.message : 'Register Error'
   } finally {
     loading.value = false
   }
@@ -85,7 +85,7 @@ function onBackdropClick(e: MouseEvent) {
     >
       <div
         v-if="auth.authModalOpen"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        class="fixed inset-0 z-100 flex items-center justify-center p-4"
         data-backdrop="1"
         @click="onBackdropClick"
       >
@@ -189,7 +189,7 @@ function onBackdropClick(e: MouseEvent) {
               <button
                 type="submit"
                 :disabled="loading || passwordsMismatch()"
-                class="w-full rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 py-3 text-sm font-semibold text-white shadow-md shadow-violet-500/20 transition hover:shadow-lg disabled:opacity-50"
+                class="w-full rounded-xl bg-linear-to-r from-violet-600 to-fuchsia-600 py-3 text-sm font-semibold text-white shadow-md shadow-violet-500/20 transition hover:shadow-lg disabled:opacity-50"
               >
                 {{ loading ? 'wait…' : auth.authModalTab === 'login' ? 'Login' : 'Register' }}
               </button>

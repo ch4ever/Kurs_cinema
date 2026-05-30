@@ -1,56 +1,29 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import api from '../api/api'
+import type { Movie, MovieCreatePayload, MovieUpdatePayload } from "@/types/movie"
+import {MovieService} from "@/api/movie"
 
-type Franchise = {
-    id: number
-    name: string
-    description: string
-}
-type Actor = {
-    id: number
-    name: string
-}
-type Genre = {
-    id: number
-    name: string
-}
-type Review = {
-    id: number
-    rating: number
-    text: string
-    created_at: number
-}
 
-type Movie = {
-    id: number
-    title: string
-    description: string
-    release_date: string
-    franchise: Franchise | null
-    rating: number
-    genre: Genre[]
-    director: string
-    actors: Actor[]
-    reviews: Review[]
-    poster: string | null
-}
 
 export const useMovieStore = defineStore('movie', {
     state: () => ({
         movies: [] as Movie[],
         movie: null as Movie | null,
         loading: false,
+        error: null as string | null,
     }),
+
     actions: {
-        async getMovies() {
+        async fetchMovies() {
             this.loading = true
+            this.error = ''
             try{
-                const { data } = await api.get<Movie[]>('movies/')
+                const { data } = await MovieService.getAll()
                 this.movies = data
             }
             catch (error) {
-                console.error(error)
+                this.error = String(error)
+                throw error
+                
             }
             finally {
                 this.loading = false
@@ -59,47 +32,55 @@ export const useMovieStore = defineStore('movie', {
         async getMovie(id: number) {
             this.loading = true
             try{
-                const { data } = await api.get<Movie>(`movies/${id}/`)
+                const { data } = await MovieService.getById(id)
                 this.movie = data
             }
             catch (error) {
-                console.error(error)
+                this.error = String(error)
+                throw error
             }
             finally {
                 this.loading = false
             }
         },
-        async createMovie(movie: Movie) {
+
+        async createMovie(movie: MovieCreatePayload) {
             try{
-                const { data } = await api.post<Movie>('movies/', movie)
-                this.movie = data
+                const { data } = await MovieService.create(movie)
+                this.movies.push(data)
             }
             catch (error) {
-                console.error(error)
+                this.error = String(error)
+                throw error
             }
             finally {
                 this.loading = false
             }
+            
         },
-        async updateMovie(id: number, movie: Movie) {
+
+        async updateMovie(id: number, movie: MovieUpdatePayload) {
             try{
-                const { data } = await api.put<Movie>(`movies/${id}/`, movie)
+                const { data } = await MovieService.update(id, movie)
                 this.movie = data
             }
             catch (error) {
-                console.error(error)
+                this.error = String(error)
+                throw error
             }
             finally {
                 this.loading = false
             }
         },
+
         async deleteMovie(id: number) {
             try{
-                await api.delete(`movies/${id}/`)
+                await MovieService.delete(id)
                 this.movies = this.movies.filter(movie => movie.id !== id)
             }
             catch (error) {
-                console.error(error)
+                this.error = String(error)
+                throw error
             }
             finally {
                 this.loading = false

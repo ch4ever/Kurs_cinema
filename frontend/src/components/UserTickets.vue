@@ -54,7 +54,7 @@ const tickets = ref<Ticket[]>([])
           <div v-for="ticket in tickets" :key="ticket.id" 
                class="group relative overflow-hidden flex flex-col md:flex-row bg-white dark:bg-slate-900/60 rounded-3xl shadow-sm hover:shadow-md transition-all ring-1 ring-slate-200/50 dark:ring-white/5">
             
-            <div class="w-full md:w-32 h-48 md:h-auto flex-shrink-0">
+            <div class="w-full md:w-32 h-48 md:h-auto shrink-0">
                 <img 
                     v-if="ticket.movie.poster" 
                     :src="ticket.movie.poster" 
@@ -65,7 +65,7 @@ const tickets = ref<Ticket[]>([])
                 </div>
             </div>
   
-            <div class="p-6 flex-grow flex flex-col justify-between">
+            <div class="p-6 grow flex flex-col justify-between">
               <div>
                 <h3 class="text-xl font-black text-slate-900 dark:text-white group-hover:text-violet-600 transition-colors">
                   {{ ticket.movie.title }}

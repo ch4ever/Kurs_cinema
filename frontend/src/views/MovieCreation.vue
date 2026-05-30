@@ -3,14 +3,16 @@
   import  api  from '@/api/api';
   import { useRoute, useRouter } from 'vue-router';
   import { useMovieStore } from '@/stores/Movie';
+  import { useAlertStore } from '@/stores/alerts';
   
   const route = useRoute();
   const router = useRouter();
   const movieStore = useMovieStore();
+  const alerts = useAlertStore();
   
   const isSubmitting = ref(false);
   
-  // Определяем, редактируем мы или создаем, по наличию ID в URL
+  
   const movieId = computed(() => route.params.id);
   const isEditing = computed(() => !!movieId.value);
   
@@ -24,13 +26,13 @@
   const fileName = ref('');
   const existingPoster = ref('');
   
-  // При загрузке страницы: если редактируем, то подтягиваем данные
+  
   onMounted(async () => {
     if (isEditing.value) {
-      // Получаем фильм
+      
       await movieStore.getMovie(Number(movieId.value));
       
-      // Заполняем форму
+      
       if (movieStore.movie) {
         movieData.value = {
           title: movieStore.movie.title,
@@ -67,30 +69,23 @@
       if (posterFile.value) {
         formData.append('poster', posterFile.value);
       }
-  
       if (isEditing.value) {
-        
-        await api.patch(`movies/${movieId.value}/`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
-          }
-        });
-        alert('Film updated!');
-      } else {
-        await api.post('movies/', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-          }
-        });
-        alert('Film created!');
+        await movieStore.updateMovie(Number(movieId.value), formData)
+        alerts.showSuccessAlert("Film updated successfully")
+        router.push(`/movies/${movieId.value}`);
+      } 
+      else {
+        const newMovie = await movieStore.createMovie(formData);
+        alerts.showSuccessAlert("Film created successfully")
+        const newMovieId = newMovie.id;
+        router.push(`movies/${newMovieId}`);
       }
   
-      router.push('/'); // Возвращаемся в каталог
+       
     } catch (error) {
-      console.error(error);
-      alert('Error while saving film.');
+        movieStore.error = String(error);
+        throw error
+      
     } finally {
       isSubmitting.value = false;
     }

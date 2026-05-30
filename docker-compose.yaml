@@ -1,6 +1,6 @@
 
 services:
-  # 1. База данных PostgreSQL
+  
   db:
     image: postgres:15-alpine
     restart: always
@@ -18,15 +18,10 @@ services:
       retries: 5
 
   
-  # redis:
-  #   image: redis:7-alpine
-  #   restart: always
-
-  # 3. Бэкенд (Django)
   backend:
     build: ./Backend
     restart: always
-    # Команда запуска: миграции -> сбор статики -> Gunicorn
+    
     command: >
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --no-input &&
@@ -38,12 +33,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      # redis:
-      #   condition: service_started
     expose:
       - "8000"
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /app
+          ignore:
+            - __pycache__/
+            - .venv/
 
-  # 4. Фронтенд (Vue + Nginx)
   frontend:
     build: ./frontend
     restart: always
@@ -51,6 +51,13 @@ services:
       - "80:80"
     depends_on:
       - backend
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /app
+          ignore:
+            - node_modules/
 
 volumes:
   postgres_data:
