@@ -10,7 +10,7 @@ const store = useMovieStore()
 const auth = userStore()
 
 onMounted(() => {
-  void store.getMovies()
+  void store.fetchMovies()
 })
 </script>
 

@@ -5,7 +5,7 @@ from .services import *
 class ActorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actor
-        fields = ['id', 'name', 'surname']
+        fields = ['id', 'name', 'surname', 'description']
     
 
 class GenreSerializer(serializers.ModelSerializer):

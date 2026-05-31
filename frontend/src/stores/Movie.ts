@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import type { Movie, MovieCreatePayload, MovieUpdatePayload } from "@/types/movie"
 import {MovieService} from "@/api/movie"
+import { useAlertStore } from '@/stores/alerts'
+
 
 
 
@@ -9,19 +11,21 @@ export const useMovieStore = defineStore('movie', {
         movies: [] as Movie[],
         movie: null as Movie | null,
         loading: false,
-        error: null as string | null,
+        
     }),
 
     actions: {
         async fetchMovies() {
             this.loading = true
-            this.error = ''
+            const alerts = useAlertStore()
+
             try{
                 const { data } = await MovieService.getAll()
                 this.movies = data
             }
-            catch (error) {
-                this.error = String(error)
+            catch (error: any) {
+                const errorMsg = error.response?.data?.error || 'Error while getting films'
+                alerts.showErrorAlert(errorMsg)
                 throw error
                 
             }
@@ -31,12 +35,15 @@ export const useMovieStore = defineStore('movie', {
         },
         async getMovie(id: number) {
             this.loading = true
+            const alerts = useAlertStore()
+
             try{
                 const { data } = await MovieService.getById(id)
                 this.movie = data
             }
-            catch (error) {
-                this.error = String(error)
+            catch (error: any) {
+                const errorMsg = error.response?.data?.error || 'Error while getting film'
+                alerts.showErrorAlert(errorMsg)
                 throw error
             }
             finally {
@@ -45,12 +52,16 @@ export const useMovieStore = defineStore('movie', {
         },
 
         async createMovie(movie: MovieCreatePayload) {
+            this.loading = true
+            const alerts = useAlertStore()
             try{
                 const { data } = await MovieService.create(movie)
                 this.movies.push(data)
+                return data
             }
-            catch (error) {
-                this.error = String(error)
+            catch (error: any) {
+                const errorMsg = error.response?.data?.error || 'Error while getting film'
+                alerts.showErrorAlert(errorMsg)
                 throw error
             }
             finally {
@@ -60,12 +71,16 @@ export const useMovieStore = defineStore('movie', {
         },
 
         async updateMovie(id: number, movie: MovieUpdatePayload) {
+            this.loading = true
+            const alerts = useAlertStore()
             try{
                 const { data } = await MovieService.update(id, movie)
                 this.movie = data
+                return data
             }
-            catch (error) {
-                this.error = String(error)
+            catch (error: any) {
+                const errorMsg = error.response?.data?.error || 'Error while updating film'
+                alerts.showErrorAlert(errorMsg)
                 throw error
             }
             finally {
@@ -74,12 +89,16 @@ export const useMovieStore = defineStore('movie', {
         },
 
         async deleteMovie(id: number) {
+            this.loading = true
+            const alerts = useAlertStore()
+
             try{
                 await MovieService.delete(id)
                 this.movies = this.movies.filter(movie => movie.id !== id)
             }
-            catch (error) {
-                this.error = String(error)
+            catch (error: any) {
+                const errorMsg = error.response?.data?.error || 'Error while deleting film'
+                alerts.showErrorAlert(errorMsg)
                 throw error
             }
             finally {

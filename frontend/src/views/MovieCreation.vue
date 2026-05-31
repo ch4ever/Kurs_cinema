@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { ref, onMounted, computed } from 'vue';
-  import  api  from '@/api/api';
   import { useRoute, useRouter } from 'vue-router';
   import { useMovieStore } from '@/stores/Movie';
   import { useAlertStore } from '@/stores/alerts';
@@ -70,21 +69,20 @@
         formData.append('poster', posterFile.value);
       }
       if (isEditing.value) {
-        await movieStore.updateMovie(Number(movieId.value), formData)
+        await movieStore.updateMovie(Number(movieId.value), formData);
         alerts.showSuccessAlert("Film updated successfully")
-        router.push(`/movies/${movieId.value}`);
+        router.push(`/movie/${movieId.value}`);
       } 
       else {
         const newMovie = await movieStore.createMovie(formData);
         alerts.showSuccessAlert("Film created successfully")
         const newMovieId = newMovie.id;
-        router.push(`movies/${newMovieId}`);
+        router.push(`/movie/${newMovieId}`);
       }
   
        
     } catch (error) {
-        movieStore.error = String(error);
-        throw error
+        console.log(error)
       
     } finally {
       isSubmitting.value = false;

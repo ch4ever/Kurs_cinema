@@ -1,3 +1,4 @@
+from django.db.models.base import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -50,7 +51,7 @@ class CreateFranchiseView(APIView):
                 response_data = self.serializer_class(franchise).data
                 return Response(response_data, status=status.HTTP_201_CREATED)
             except ValueError as e:
-                return Response({"error": str(e)},status = status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": str(e)},status = status.HTTP_400_BAD_REQUEST)
 
 
 class CreateActorView(APIView):
@@ -62,11 +63,11 @@ class CreateActorView(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             try:
-                franchise = create_actor(**serializer.validated_data)
-                response_data = self.serializer_class(franchise).data
+                actor = create_actor(**serializer.validated_data)
+                response_data = self.serializer_class(actor).data
                 return Response(response_data, status=status.HTTP_201_CREATED)
             except ValueError as e:
-                return Response({"error": str(e)},status = status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": str(e)},status = status.HTTP_400_BAD_REQUEST)
 
 class CreateGenreView(APIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
@@ -77,11 +78,11 @@ class CreateGenreView(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             try:
-                franchise = create_genre(**serializer.validated_data)
-                response_data = self.serializer_class(franchise).data
+                genre = create_genre(**serializer.validated_data)
+                response_data = self.serializer_class(genre).data
                 return Response(response_data, status=status.HTTP_201_CREATED)
             except ValueError as e:
-                return Response({"error": str(e)},status = status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": str(e)},status = status.HTTP_400_BAD_REQUEST)
 
 class BookMovieView(APIView):
     authentication_classes = [TokenAuthentication, JWTAuthentication, SessionAuthentication]
@@ -89,15 +90,34 @@ class BookMovieView(APIView):
 
     def post(self, request, movie_id):
         movie = get_object_or_404(Movie, id=movie_id)
-        seats = request.data.get('seats', []) 
+        requested_seats = request.data.get('seats', []) 
         
+        if not requested_seats:
+            return Response({"detail": "Empty seats list"}, status=status.HTTP_400_BAD_REQUEST)
+
         
-        MovieBooking.objects.create(
-            user=request.user, 
-            movie=movie, 
-            seats=seats
-        )
-        return Response({"message": "Tickets bought successfully"}, status=status.HTTP_201_CREATED)
+        with transaction.atomic():
+            booked_seats_qs = MovieBooking.objects.filter(movie=movie).values_list('seats', flat=True)
+            already_booked = set()
+            for seats_list in booked_seats_qs:
+                if seats_list:
+                    already_booked.update(seats_list)
+
+            
+            overlap = set(requested_seats).intersection(already_booked)
+            if overlap:
+                return Response(
+                    {"detail": f"Seats {', '.join(overlap)} already booked!"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            MovieBooking.objects.create(
+                user=request.user, 
+                movie=movie, 
+                seats=requested_seats
+            )
+            
+        return Response({"detail": "Tickets bought successfully"}, status=status.HTTP_201_CREATED)
 
 
 class MovieBookedSeatsView(APIView):
@@ -105,18 +125,17 @@ class MovieBookedSeatsView(APIView):
 
     def get(self, request, movie_id):
         get_object_or_404(Movie, id=movie_id)
-        booked: list[str] = []
+        booked = set()
         for booking in MovieBooking.objects.filter(movie_id=movie_id).only('seats'):
-            raw = booking.seats or []
-            if isinstance(raw, list):
-                for seat in raw:
-                    if isinstance(seat, str) and seat not in booked:
-                        booked.append(seat)
-        return Response({"booked_seats": booked},status=status.HTTP_201_CREATED)
+            if booking.seats:
+                booked.update(booking.seats)
+                
+        return Response({"booked_seats": list(booked)}, status=status.HTTP_200_OK)
 
 
 
 class MyTicketsView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         bookings = MovieBooking.objects.filter(user=request.user).select_related('movie')
         

@@ -110,7 +110,7 @@ onMounted(() => {
           <div class="absolute -top-10 left-1/2 h-20 w-full -translate-x-1/2 bg-violet-500/20 blur-[60px] dark:bg-violet-500/10" />
           
           <div class="relative overflow-hidden">
-            <div class="h-1.5 w-full rounded-full bg-gradient-to-r from-transparent via-violet-500 to-transparent shadow-[0_0_20px_rgba(139,92,246,0.5)]" />
+            <div class="h-1.5 w-full rounded-full bg-linear-to-r from-transparent via-violet-500 to-transparent shadow-[0_0_20px_rgba(139,92,246,0.5)]" />
             <p class="mt-4 text-center text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 dark:text-slate-500">
               Cinema Screen
             </p>

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { userStore } from '@/stores/user'
+import { useAlertStore } from '@/stores/alerts'
 
 const auth = userStore()
+const alerts = useAlertStore()
 
 const username = ref('')
 const password = ref('')
@@ -32,19 +34,22 @@ watch(
   },
 )
 
-const passwordsMismatch = () =>
-  auth.authModalTab === 'register' &&
-  password.value.length > 0 &&
-  password2.value.length > 0 &&
-  password.value !== password2.value
+const isPasswordsMismatch = computed(() => {
+  return auth.authModalTab === 'register' &&
+         password.value.length > 0 &&
+         password2.value.length > 0 &&
+         password.value !== password2.value
+})
 
 async function submitLogin() {
   errorMsg.value = ''
   loading.value = true
   try {
     await auth.login(username.value.trim(), password.value)
-  } catch (e) {
-    errorMsg.value = e instanceof Error ? e.message : 'Ошибка входа'
+    auth.closeAuthModal()
+
+  } catch (e: any) {
+    errorMsg.value = e.response?.data?.detail || e.message || 'Login error'
   } finally {
     loading.value = false
   }
@@ -52,17 +57,21 @@ async function submitLogin() {
 
 async function submitRegister() {
   errorMsg.value = ''
-  if (passwordsMismatch()) {
-    errorMsg.value = 'Пароли не совпадают'
-    return
+  if (isPasswordsMismatch.value) {
+    errorMsg.value = 'Passwords mismatch'
+    
   }
   loading.value = true
   try {
     await auth.register(username.value.trim(), password.value)
+    alerts.showSuccessAlert('Register successfully')
+
   } catch (e) {
     errorMsg.value = e instanceof Error ? e.message : 'Register Error'
+    
   } finally {
     loading.value = false
+    
   }
 }
 
@@ -181,14 +190,12 @@ function onBackdropClick(e: MouseEvent) {
                   required
                   class="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-slate-900 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                 />
-                <p v-if="passwordsMismatch()" class="mt-1 text-xs text-amber-700 dark:text-amber-400">
-                  Passwords needs to match
-                </p>
+                
               </div>
 
               <button
                 type="submit"
-                :disabled="loading || passwordsMismatch()"
+                :disabled="loading || isPasswordsMismatch"
                 class="w-full rounded-xl bg-linear-to-r from-violet-600 to-fuchsia-600 py-3 text-sm font-semibold text-white shadow-md shadow-violet-500/20 transition hover:shadow-lg disabled:opacity-50"
               >
                 {{ loading ? 'wait…' : auth.authModalTab === 'login' ? 'Login' : 'Register' }}

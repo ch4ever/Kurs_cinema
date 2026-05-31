@@ -45,6 +45,34 @@ api.interceptors.response.use(
         store.setToken(null)
         store.setUser(null)
         store.openAuthModal('login')
+        const { useAlertStore } = await import('../stores/alerts')
+        useAlertStore().showErrorAlert('Session expired. Please, log in')
+      }
+    }
+    if (error.response?.status !== 401) {
+      const { useAlertStore } = await import('../stores/alerts')
+      const alerts = useAlertStore()
+
+      if (!error.response) {
+        alerts.showErrorAlert('Network error')
+      } else {
+        const data = error.response.data
+
+        if (data.detail) {
+          alerts.showErrorAlert(data.detail)
+        } 
+        else if (typeof data === 'object') {
+          const errorMessages = Object.entries(data)
+            .map(([field, messages]) => {
+              const msg = Array.isArray(messages) ? messages.join(' ') : String(messages)
+              return `${field}: ${msg}`
+            })
+            .join('<br>') 
+            
+          alerts.showErrorAlert(errorMessages || 'Data validation error')
+        } else {
+          alerts.showErrorAlert('Server error')
+        }
       }
     }
     return Promise.reject(error)
