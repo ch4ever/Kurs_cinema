@@ -4,14 +4,8 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 # Create your models here.
 
 class UsersManager(BaseUserManager):
-    def get_role(self, role):
-        return {
-            'CUSTOMER': 'Customers',
-            'ADMIN': 'Admins'
-        }.get(role,'Customers')
-        
     def create_user(self, username, password, role='CUSTOMER', **extra_fields):
-        user = self.model(username=username, role=self.get_role(role), **extra_fields)
+        user = self.model(username=username, role=role, **extra_fields)
         user.set_password(password)
         user.save()
         return user

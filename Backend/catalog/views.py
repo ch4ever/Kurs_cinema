@@ -133,7 +133,6 @@ class MovieBookedSeatsView(APIView):
         return Response({"booked_seats": list(booked)}, status=status.HTTP_200_OK)
 
 
-
 class MyTicketsView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
