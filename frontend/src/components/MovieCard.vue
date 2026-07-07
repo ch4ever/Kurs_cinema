@@ -14,7 +14,7 @@ const router = useRouter()
 const auth = userStore()
 
 const goToEdit = () => {
-  router.push(`/edit/${props.movie.id}`)
+  router.push(`/admin/movies/${props.movie.id}`)
 }
 </script>
 

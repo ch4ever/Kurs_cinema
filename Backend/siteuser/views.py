@@ -62,12 +62,15 @@ class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
+    @extend_schema(
+        summary="Getme",
+        description="Get ur basic data",
+        tags=["SiteUser"],
+        responses={
+            status.HTTP_200_OK: UserSerializer,
+        }
+    )
     def get(self, request):
         user = request.user
-        return Response({
-            "id": user.id,
-            "username": user.username,
-            "role": user.role,
-            "is_staff": user.is_staff,
-            "is_superuser": user.is_superuser,
-        })
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -4,11 +4,13 @@ import { useRoute, useRouter } from 'vue-router'
 import api from '../api/api'
 import AppHeader from '../components/AppHeader.vue'
 import { useMovieStore } from '@/stores/Movie'
+import { useAlertStore } from '@/stores/alerts'
 
 const route = useRoute()
 const router = useRouter()
 
 const movieStore = useMovieStore()
+const alerts = useAlertStore()
 const movieId = String(route.params.id ?? '')
 
 const ticketPrice = 100
@@ -41,10 +43,10 @@ const buyTickets = async () => {
     await api.post(`movies/${movieId}/book/`, {
       seats: selectedSeats.value,
     })
-    alert('Tickets purchased successfully! 🎉')
-    router.push('/tickets')
+    alerts.showSuccessAlert('Tickets purchased successfully')
+    router.push('/profile/tickets')
   } catch (error) {
-    alert('Error while purchasing tickets.')
+    alerts.showErrorAlert('Error while purchasing tickets.')
     console.error(error)
   } finally {
     isLoading.value = false
@@ -197,4 +199,3 @@ onMounted(() => {
     </main>
   </div>
 </template>
-

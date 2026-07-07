@@ -23,7 +23,7 @@ const goToBooking = () => {
 }
 
 const goToEdit = () => {
-  router.push(`/edit/${movieId}`)
+  router.push(`/admin/movies/${movieId}`)
 }
 </script>
 

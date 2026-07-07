@@ -67,7 +67,7 @@ api.interceptors.response.use(
               const msg = Array.isArray(messages) ? messages.join(' ') : String(messages)
               return `${field}: ${msg}`
             })
-            .join('<br>') 
+            .join('\n') 
             
           alerts.showErrorAlert(errorMessages || 'Data validation error')
         } else {

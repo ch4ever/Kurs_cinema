@@ -56,7 +56,7 @@ onMounted(() => {
           <div class="mt-10 flex items-center justify-center gap-4 flex-wrap">
             <RouterLink
               v-if="auth.isAdmin"
-              to="/create"
+              to="/admin/movies"
               class="group relative inline-flex items-center justify-center rounded-xl bg-violet-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-0.5 hover:bg-violet-500 hover:shadow-violet-500/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
             >
               <span class="mr-2">➕</span> Add Movie
@@ -105,7 +105,7 @@ onMounted(() => {
             </p>
             <RouterLink
               v-if="auth.isAdmin"
-              to="/create"
+              to="/admin/movies"
               class="mt-8 inline-flex items-center justify-center rounded-xl bg-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-violet-500 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
             >
               Add film

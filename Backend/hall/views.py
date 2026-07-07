@@ -53,6 +53,11 @@ from .models import Hall
             status.HTTP_204_NO_CONTENT: None,
         }
     ),
+    update=extend_schema(
+        summary="Hall update",
+        tags=['Hall'],
+        responses=HallSerializer(),
+    )
 )
 class HallViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser]
@@ -69,11 +74,10 @@ class SeatStatusUpdateView(APIView):
     summary="Update seat status",
     description="Update seat status by seat IDs",
     tags=["Hall"],
+    request=SeatBlockSerializer,
     responses={
         status.HTTP_200_OK: SeatSerializer(many=True),
-    },
-    request=SeatBlockSerializer,
-    )
+    })
     def patch(self, request):
         serializer = SeatBlockSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

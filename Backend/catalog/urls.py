@@ -1,18 +1,22 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
+from django.urls import include
 from .views import (
-    MovieViewSet,
-    CreateFranchiseView,
-    CreateActorView,
-    CreateGenreView,
+    FranchiseViewset,
+    ActorViewset,
+    GenreViewset,
+    MovieViewset,
     BookMovieView,
     MovieBookedSeatsView,
     MyTicketsView,
 )
-from rest_framework.routers import DefaultRouter
-from django.urls import include
+
 
 router = DefaultRouter()
-router.register('movies', MovieViewSet, basename='movies')
+router.register('movies', MovieViewset, basename='movies')
+router.register('franchise',FranchiseViewset, basename='franchise')
+router.register('actors',ActorViewset, basename='actor'),
+router.register('genres',GenreViewset, basename='genres'),
 
 
 urlpatterns = [
@@ -20,7 +24,4 @@ urlpatterns = [
     path('api/movies/<int:movie_id>/book/', BookMovieView.as_view(), name='book-movie'),
     path('api/my-tickets/',MyTicketsView.as_view(),name='my_tickets'),
     path('api/', include(router.urls)),
-    path('franchise/', CreateFranchiseView.as_view(), name='create-franchise'),
-    path('actors/', CreateActorView.as_view(), name='create-actor'),
-    path('genres/', CreateGenreView.as_view(), name='create-genre'),
 ]

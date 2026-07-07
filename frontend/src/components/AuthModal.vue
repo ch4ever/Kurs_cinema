@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { userStore } from '@/stores/user'
 import { useAlertStore } from '@/stores/alerts'
 
@@ -46,10 +46,11 @@ async function submitLogin() {
   loading.value = true
   try {
     await auth.login(username.value.trim(), password.value)
-    auth.closeAuthModal()
-
+    await nextTick()
+    alerts.showSuccessAlert('Login successfully')
   } catch (e: any) {
     errorMsg.value = e.response?.data?.detail || e.message || 'Login error'
+    alerts.showErrorAlert(errorMsg.value)
   } finally {
     loading.value = false
   }
@@ -59,16 +60,17 @@ async function submitRegister() {
   errorMsg.value = ''
   if (isPasswordsMismatch.value) {
     errorMsg.value = 'Passwords mismatch'
-    
+    return
   }
   loading.value = true
   try {
     await auth.register(username.value.trim(), password.value)
+    await nextTick()
     alerts.showSuccessAlert('Register successfully')
 
   } catch (e) {
     errorMsg.value = e instanceof Error ? e.message : 'Register Error'
-    
+    alerts.showErrorAlert(errorMsg.value)
   } finally {
     loading.value = false
     

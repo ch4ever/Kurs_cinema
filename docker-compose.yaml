@@ -38,7 +38,7 @@ services:
     develop:
       watch:
         - action: sync
-          path: ./backend
+          path: ./Backend
           target: /app
           ignore:
             - __pycache__/
@@ -59,5 +59,23 @@ services:
           ignore:
             - node_modules/
 
+  frontend-dev:
+    profiles:
+      - dev
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    environment:
+      - VITE_API_PROXY_TARGET=http://backend:8000
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend
+
 volumes:
   postgres_data:
+  frontend_node_modules:

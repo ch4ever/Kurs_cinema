@@ -3,21 +3,39 @@ from .models import Franchise, Movie, Review, Genre, Actor,MovieBooking
 from .services import *
 
 class ActorSerializer(serializers.ModelSerializer):
+    description = serializers.CharField(required=False, allow_blank=True)
     class Meta:
         model = Actor
         fields = ['id', 'name', 'surname', 'description']
-    
+        read_only_fields = ['id']
+
+    def create(self, validated_data):
+        actor = create_actor(**validated_data)
+        return actor
+        
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = '__all__'
+        fields = ['id','name']
+        read_only_fields = ['id']
+
+    def create(self,validated_data):
+        genre = create_genre(**validated_data)
+        return genre
 
 
 class FranchiseSerializer(serializers.ModelSerializer):
+    description = serializers.CharField(required=False, allow_blank=True)
     class Meta:
         model = Franchise
-        fields = ['id', 'name']
+        fields = ['id', 'name','description']
+        read_only_fields = ['id']
+
+    def create(self, validated_data):
+        franchise = create_franchise(**validated_data)
+        return franchise
+
 
 
 class MovieSerializer(serializers.ModelSerializer):
@@ -28,25 +46,65 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = ['id', 'title', 'description', 'release_date','franchise', 'actors', 'genres','poster']
 
+
 class MovieCreateSerializer(serializers.ModelSerializer):
-    actor_ids = serializers.ListField(child=serializers.IntegerField(), required=False,write_only=True)
-    genre_ids = serializers.ListField(child=serializers.IntegerField(), required=False,write_only=True)
-    franchise_id = serializers.IntegerField(required=False, allow_null=True)
+    actors = serializers.PrimaryKeyRelatedField(
+        queryset=Actor.objects.all(),
+        many=True,
+        write_only=True,
+        required=False,
+    )
+
+    genres = serializers.PrimaryKeyRelatedField(
+        queryset=Genre.objects.all(),
+        many=True,
+        write_only=True,
+        required=False,
+    )
+
+    franchise = serializers.PrimaryKeyRelatedField(
+        queryset=Franchise.objects.all(),
+        required=False,
+        allow_null=True,
+    )
     class Meta:
         model = Movie
-        fields = ['title', 'description', 'release_date', 'poster', 'actor_ids', 'genre_ids', 'franchise_id']
+        fields = ['title', 'description', 'release_date', 'poster', 'actors', 'genres', 'franchise']
 
     def create(self, validated_data):
-        actor_ids = validated_data.pop('actor_ids', [])
-        genre_ids = validated_data.pop('genre_ids', [])
-        franchise_id = validated_data.pop('franchise_id', None)
+        actors = validated_data.pop('actors', [])
+        genres = validated_data.pop('genres', [])
+        franchise = validated_data.pop('franchise', None)
         return create_movie(
-            actor_ids=actor_ids,
-            genre_ids=genre_ids,
-            franchise=franchise_id,
+            actors=actors,
+            genres=genres,
+            franchise=franchise,
             **validated_data,
         )
 
+    def update(self, instance, validated_data):
+        actors = validated_data.pop('actors', None)
+        genres = validated_data.pop('genres', None)
+        franchise = validated_data.pop('franchise', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if franchise is not None:
+            instance.franchise = franchise
+
+        instance.save()
+
+        if actors is not None:
+            instance.actors.set(actors)
+
+        if genres is not None:
+            instance.genres.set(genres)
+
+        return instance
+
+
+#TODO make for this another app
 class MovieBookingSerializer(serializers.ModelSerializer):
     movie = MovieSerializer(read_only=True) 
     

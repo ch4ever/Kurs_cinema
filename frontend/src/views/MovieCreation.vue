@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, onMounted, computed } from 'vue';
+  import { ref, onMounted, computed, watch } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useMovieStore } from '@/stores/Movie';
   import { useAlertStore } from '@/stores/alerts';
@@ -25,8 +25,18 @@
   const fileName = ref('');
   const existingPoster = ref('');
   
+  const resetForm = () => {
+    movieData.value = {
+      title: '',
+      description: '',
+      release_date: '',
+    };
+    posterFile.value = null;
+    fileName.value = '';
+    existingPoster.value = '';
+  };
   
-  onMounted(async () => {
+  const loadMovieData = async () => {
     if (isEditing.value) {
       
       await movieStore.getMovie(Number(movieId.value));
@@ -40,7 +50,17 @@
         };
         existingPoster.value = movieStore.movie.poster || '';
       }
+    } else {
+      resetForm();
     }
+  };
+
+  onMounted(async () => {
+    await loadMovieData();
+  });
+
+  watch(movieId, async () => {
+    await loadMovieData();
   });
   
   const handleFileUpload = (event: Event) => {

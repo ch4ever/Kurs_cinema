@@ -5,17 +5,20 @@ export type AuthUser = {
   id: number
   username: string
   role?: string
+  is_staff?: boolean
+  is_superuser?: boolean
 }
 
 function readUserFromStorage(): AuthUser | null {
   const raw = localStorage.getItem('user')
   if (!raw) return null
-  try {
+  try { 
     return JSON.parse(raw) as AuthUser
   } catch {
     return null
   }
 }
+
 
 function pickServerMessage(err: unknown): string {
   const e = err as { response?: { data?: unknown } }
@@ -31,15 +34,23 @@ function pickServerMessage(err: unknown): string {
     if (typeof flat === 'string') return flat
     if (Array.isArray(flat) && typeof flat[0] === 'string') return flat[0]
   }
-  return 'Ошибка запроса'
+  return 'Request error'
 }
 
 function messageFromAxios(err: unknown): string {
   const e = err as { response?: { status?: number }; message?: string }
-  if (e.response?.status === 401) return 'Неверный логин или пароль'
+  if (e.response?.status === 401) return 'Invalid username or password'
   if (e.response?.status === 400) return pickServerMessage(err)
   if (e.message) return e.message
-  return 'Нет ответа от сервера'
+  return 'No server response'
+}
+
+function isAdminUser(user: AuthUser | null): boolean {
+  if (!user) return false
+  if (user.is_staff || user.is_superuser) return true
+
+  const role = user.role?.toLowerCase()
+  return role === 'admin' || role === 'admins'
 }
 
 export const userStore = defineStore('auth', {
@@ -53,7 +64,7 @@ export const userStore = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => Boolean(state.token),
     username: (state) => state.user?.username ?? '',
-    isAdmin: (state) => state.user?.role === 'Admins',
+    isAdmin: (state) => isAdminUser(state.user),
   },
 
   actions: {

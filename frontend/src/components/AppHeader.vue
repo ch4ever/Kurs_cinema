@@ -2,11 +2,14 @@
 import { RouterLink } from 'vue-router'
 import ThemeToggle from './themeToggle.vue'
 import { userStore } from '@/stores/user'
+import { useAlertStore } from '@/stores/alerts'
 
 const auth = userStore()
+const alerts = useAlertStore()
 
 function logout() {
   auth.logout()
+  alerts.showSuccessAlert('Logout successfully')
 }
 </script>
 
@@ -39,11 +42,11 @@ function logout() {
         </RouterLink>
         
         <RouterLink v-if="auth.isAdmin"
-          to="/create"
+          to="/admin"
           class="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-200/90 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
           active-class="!bg-white !text-violet-800 shadow-sm ring-1 ring-slate-300/80 dark:!bg-violet-950/50 dark:!text-violet-200 dark:ring-slate-700"
         >
-          Add film
+          Admin panel
         </RouterLink>
 
         <template v-if="auth.isAuthenticated">

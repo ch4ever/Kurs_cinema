@@ -5,15 +5,15 @@ from django.conf import settings
 # Create your models here.
 class Franchise(models.Model):
     name = models.CharField(max_length = 50)
-    description = models.TextField(blank = True)
+    description = models.TextField(blank = True, null=True)
     def __str__(self):
         return f"{self.name} {self.description}".strip()
 
-
+#TODO add actor poster + smth else
 class Actor(models.Model):
     name = models.CharField(max_length = 50)
     surname = models.CharField(max_length = 50)
-    description = models.TextField(blank = True,default='')
+    description = models.TextField(blank = True, null=True)
 
 
 class Genre(models.Model):
@@ -48,7 +48,7 @@ class Review(models.Model):
     text = models.TextField(blank=True,null=True)
     created_at = models.DateField(auto_now_add=True)
 
-
+#TODO rebuild
 class MovieBooking(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)

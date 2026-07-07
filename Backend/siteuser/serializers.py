@@ -46,4 +46,4 @@ class UserRegisterSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = defaultUser
-        fields = ('id', 'username','role')
+        fields = ('id', 'username','role','is_superuser','is_staff')
