@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.codex
+.agents
 
 .env.local
 .env.docker
