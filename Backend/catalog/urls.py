@@ -6,9 +6,6 @@ from .views import (
     ActorViewset,
     GenreViewset,
     MovieViewset,
-    BookMovieView,
-    MovieBookedSeatsView,
-    MyTicketsView,
 )
 
 
@@ -20,8 +17,5 @@ router.register('genres',GenreViewset, basename='genres'),
 
 
 urlpatterns = [
-    path('api/movies/<int:movie_id>/seats/', MovieBookedSeatsView.as_view(), name='movie-seats'),
-    path('api/movies/<int:movie_id>/book/', BookMovieView.as_view(), name='book-movie'),
-    path('api/my-tickets/',MyTicketsView.as_view(),name='my_tickets'),
     path('api/', include(router.urls)),
 ]

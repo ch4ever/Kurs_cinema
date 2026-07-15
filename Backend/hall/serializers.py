@@ -1,5 +1,6 @@
+from django.db import transaction
 from rest_framework import serializers
-from .services import create_hall
+from .services import create_hall, update_hall
 from .models import Hall, Seat
 
 
@@ -24,10 +25,7 @@ class HallSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hall
         fields = ['id', 'name', 'blocks', 'rows', 'seats_per_row', 'seats']
-
-    def create(self, validated_data):
-        hall = create_hall(**validated_data)
-        return hall
+        read_only_fields = ['id']
 
     def validate_rows(self, value):
         if value < 1:
@@ -43,4 +41,12 @@ class HallSerializer(serializers.ModelSerializer):
         if value < 1:
             raise serializers.ValidationError('Blocks count must be greater than zero')
         return value
+
+    def create(self, validated_data):
+        hall = create_hall(**validated_data)
+        return hall
+
+    def update(self, instance, validated_data):
+        return update_hall(instance, **validated_data)
+                    
 

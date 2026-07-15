@@ -8,5 +8,5 @@ router.register('admin/halls', HallViewSet, basename='halls')
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('api/admin/seats', SeatStatusUpdateView.as_view(), name='seats-availability'),
+    path('api/admin/seats/', SeatStatusUpdateView.as_view(), name='seats-availability'),
 ]

@@ -5,8 +5,8 @@ from django.db import models
 class Hall(models.Model):
     name = models.CharField(max_length=50, unique=True)
     blocks = models.PositiveSmallIntegerField(default=2)
-    rows = models.PositiveSmallIntegerField(default=10)
-    seats_per_row = models.PositiveSmallIntegerField(default=10)
+    rows = models.PositiveSmallIntegerField(default=5)
+    seats_per_row = models.PositiveSmallIntegerField(default=5)
 
     def __str__(self):
         return self.name

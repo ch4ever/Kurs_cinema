@@ -63,7 +63,13 @@ class HallViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser]
     authentication_classes = [JWTAuthentication]
     serializer_class = HallSerializer
-    queryset = Hall.objects.prefetch_related('seats')
+
+
+    def get_queryset(self):
+        queryset = Hall.objects.all()
+        if self.action in ('list', 'retrieve'):
+            return queryset.prefetch_related('seats')
+        return queryset
 
 
 class SeatStatusUpdateView(APIView):

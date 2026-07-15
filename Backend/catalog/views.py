@@ -80,7 +80,6 @@ class FranchiseViewset(viewsets.ModelViewSet):
     serializer_class = FranchiseSerializer
     queryset = Franchise.objects.all()
 
-    #TODO do i need this?
     def get_queryset(self):
         query = super().get_queryset()
         if self.action in ['retrieve','list']:
@@ -194,63 +193,3 @@ class GenreViewset(viewsets.ModelViewSet):
             return [AllowAny()]
         return super().get_permissions()
 
-
-
-#TODO make personal app for this
-class BookMovieView(APIView):
-    authentication_classes = [TokenAuthentication, JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, movie_id):
-        movie = get_object_or_404(Movie, id=movie_id)
-        requested_seats = request.data.get('seats', []) 
-        
-        if not requested_seats:
-            return Response({"detail": "Empty seats list"}, status=status.HTTP_400_BAD_REQUEST)
-
-        
-        with transaction.atomic():
-            booked_seats_qs = MovieBooking.objects.filter(movie=movie).values_list('seats', flat=True)
-            already_booked = set()
-            for seats_list in booked_seats_qs:
-                if seats_list:
-                    already_booked.update(seats_list)
-
-            
-            overlap = set(requested_seats).intersection(already_booked)
-            if overlap:
-                return Response(
-                    {"detail": f"Seats {', '.join(overlap)} already booked!"}, 
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            MovieBooking.objects.create(
-                user=request.user, 
-                movie=movie, 
-                seats=requested_seats
-            )
-            
-        return Response({"detail": "Tickets bought successfully"}, status=status.HTTP_201_CREATED)
-
-
-class MovieBookedSeatsView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        movie_id = request.data['movie_id']
-        get_object_or_404(Movie, id=movie_id)
-        booked = set()
-        for booking in MovieBooking.objects.filter(movie_id=movie_id).only('seats'):
-            if booking.seats:
-                booked.update(booking.seats)
-                
-        return Response({"booked_seats": list(booked)}, status=status.HTTP_200_OK)
-
-
-class MyTicketsView(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self, request):
-        bookings = MovieBooking.objects.filter(user=request.user).select_related('movie')
-        
-        serializer = MovieBookingSerializer(bookings, many=True,  context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
