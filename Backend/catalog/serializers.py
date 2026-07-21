@@ -46,6 +46,11 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = ['id', 'title', 'description', 'release_date','franchise', 'actors', 'genres','poster']
 
+class MovieShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        fields = ['id', 'title', 'poster']
+
 
 class MovieCreateSerializer(serializers.ModelSerializer):
     actors = serializers.PrimaryKeyRelatedField(

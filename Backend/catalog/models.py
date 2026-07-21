@@ -2,7 +2,6 @@ from django.db import models
 from django.conf import settings
 
 
-# Create your models here.
 class Franchise(models.Model):
     name = models.CharField(max_length = 50)
     description = models.TextField(blank = True, null=True)
@@ -48,9 +47,4 @@ class Review(models.Model):
     text = models.TextField(blank=True,null=True)
     created_at = models.DateField(auto_now_add=True)
 
-#TODO rebuild
-class MovieBooking(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
-    seats = models.JSONField(default=list)
-    created_at = models.DateTimeField(auto_now_add=True)
+

@@ -50,3 +50,8 @@ class HallSerializer(serializers.ModelSerializer):
         return update_hall(instance, **validated_data)
                     
 
+
+class HallShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hall
+        fields = ['id', 'name', 'blocks', 'rows', 'seats_per_row']
